@@ -92,7 +92,7 @@
             border: 1.5px solid #eee ;
             border-right-color:#000 ;
             border-bottom-color:#000 ;
-            
+
             image-rendering: pixelated;
 
             &:active{
@@ -147,6 +147,7 @@
         //ELEMENTOS
         const $canvas = $('#canvas')
         const $colorPicker = $('#color-picker')//recuperar el color picker para usar los colores 
+        const $clearBtn = $('#clear-btn')//recuperar el boton de limpiar para borrar los dibujos 
         const  ctx = $canvas.getContext('2d')
 
         // ESTADOS
@@ -166,6 +167,7 @@
 
        
         $colorPicker.addEventListener('change', handleChangeColor)
+        $clearBtn.addEventListener('click', clearCanvas)
 
         // METODOS
         function startDrawing (event) {
@@ -199,15 +201,20 @@
 
         }
 
-        function stopDrawing(event){
+    function stopDrawing(event){
             isDrawing = false
             
         }
 
-        function handleChangeColor() {
+    function handleChangeColor() {
       const { value } = $colorPicker
       ctx.strokeStyle = value
     }
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
+    
 
 
     </script>
@@ -234,7 +241,7 @@
             <button id="rectangle-btn" title="Rectangulo"></button>
             <button id="ellipse-btn" title="Elipse"></button>
             <button id="picker-btn" title="Capturar Color"></button>
-            <button id="clear-btn" title="Eliminar"></button>
+            <button id="clear-btn" title="Limpiar dibujo"></button>
         </nav>
     </aside>
         <main>
