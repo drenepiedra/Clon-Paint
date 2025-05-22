@@ -4,8 +4,246 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clon de Paint con fines didacticos</title>
+    <style>
+     body {
+      font-family: 'Arial', sans-serif;
+      background: #222;
+      padding: 16px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    h1 {
+        color: #fce300;
+        font-size: 12px;
+        font-weight: 600;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 4px;
+
+    img {
+        width: 16px;
+        height: auto;
+    }
+    }
+
+    canvas {
+        background: #fff;
+    }
+
+    header {
+        grid-area: header;
+        background: silver;
+        padding: 2px;
+
+    button {
+        border: 0;
+        background: transparent;
+
+        &:hover {
+        box-shadow:
+            1px 1px black,
+            inset -1px -1px gray,
+            inset 1px 1px white;
+        }
+    }
+    }
+
+    main {
+        grid-area: main;
+        padding: 15px;
+    }
+
+    footer {
+      grid-area: footer;
+      background: silver;
+      padding: 4px;
+    }
+
+        #container {
+            border: 1px solid #808080;
+            display: grid;
+            grid-template-areas:
+            "header header header"
+            "aside main main"
+            "footer footer footer";
+    }
+
+    aside{
+        background: silver;
+        grid-area: aside;
+        width: 52px;
+        padding-top: 2px;
+
+        nav{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1px;
+            justify-content: center;
+        }
+
+        button{
+            width: 24px;
+            height: 24px;
+
+            background: #bdbdbd url('./icons/draw.png') no-repeat center;
+            border: 1.5px solid #eee ;
+            border-right-color:#000 ;
+            border-bottom-color:#000 ;
+            
+            image-rendering: pixelated;
+
+            &:active{
+                background-color: #eee;
+                border-color: #000 ;
+                border-right-color:#ffffff ;
+                border-bottom-color:#ffffff ;
+            }
+        }
+    }
+    #erase-btn {
+      background-image: url('./icons/erase.png');
+    }
+
+    #rectangle-btn {
+      background-image: url('./icons/rectangle.png');
+    }
+
+    #ellipse-btn {
+      background-image: url('./icons/ellipse.png');
+    }
+
+    #picker-btn {
+      background-image: url('./icons/picker.png');
+    }
+
+    #clear-btn {
+      background-image: url('./icons/trash.png');
+      background-size: 18px;
+    }
+
+    #save-btn {
+      background-image: url('./icons/save.png');
+    }
+
+    </style>
+
+    <script type="module">
+        // CONSTANTES
+        const MODES = {
+      DRAW: 'draw',
+      ERASE: 'erase',
+      RECTANGLE: 'rectangle',
+      ELLIPSE: 'ellipse',
+      PICKER: 'picker',
+      SAVE: 'save'
+    }
+
+    const $ = selector => document.querySelector(selector)
+    const $$ = selector => document.querySelectorAll(selector)
+
+        //ELEMENTOS
+        const $canvas = $('#canvas')
+        const $colorPicker = $('#color-picker')//recuperar el color picker para usar los colores 
+        const  ctx = $canvas.getContext('2d')
+
+        // ESTADOS
+        let isDrawing = false
+        let isShiftPressed = false
+        let startX, startY
+        let lastX = 0
+        let lastY = 0
+        let mode = MODES.DRAW
+        let imageData
+
+        //EVENTOS
+        $canvas.addEventListener('mousedown', startDrawing)
+        $canvas.addEventListener('mousemove', draw)
+        $canvas.addEventListener('mouseup', stopDrawing)
+        $canvas.addEventListener('mouseleave', stopDrawing)
+
+       
+        $colorPicker.addEventListener('change', handleChangeColor)
+
+        // METODOS
+        function startDrawing (event) {
+        isDrawing = true
+
+        const {offsetX, offsetY} = event
+        ;[startX,startY] = [offsetX,offsetY]
+        ;[lastX,lastY] = [offsetX,offsetY]
+
+        // console.log(startX,startY,offsetX,offsetY)
+    }
+
+    function draw(event) {
+        if (!isDrawing) return
+
+        const { offsetX, offsetY } = event
+
+        // comenzar un trazado
+        ctx.beginPath()
+
+        // mover el trazado a las coordenadas actuales
+        ctx.moveTo(lastX, lastY)
+
+        // dibujar una línea entre coordenadas actuales y las nuevas
+        ctx.lineTo(offsetX, offsetY)
+
+        ctx.stroke();
+
+        // actualizar la última coordenada utilizada
+        [lastX, lastY] = [offsetX, offsetY]
+
+        }
+
+        function stopDrawing(event){
+            isDrawing = false
+            
+        }
+
+        function handleChangeColor() {
+      const { value } = $colorPicker
+      ctx.strokeStyle = value
+    }
+
+
+    </script>
 </head>
 <body>
-    
+    <h1>
+        <img src="./icon.png" alt="Paint">
+    Paint
+    </h1>
+
+    <div id="container">
+        <header>
+            <button>File</button>
+            <button>Edit</button>
+            <button>View</button>
+            <button>Images</button>
+            <button>Option</button>
+            <button>Help</button>
+        </header>
+    <aside>
+        <nav>
+            <button id="draw-btn" title="Pencil"></button>
+            <button id="erase-btn" title="Borrar"></button>
+            <button id="rectangle-btn" title="Rectangulo"></button>
+            <button id="ellipse-btn" title="Elipse"></button>
+            <button id="picker-btn" title="Capturar Color"></button>
+            <button id="clear-btn" title="Eliminar"></button>
+        </nav>
+    </aside>
+        <main>
+            <canvas id="canvas" width="300" height="200"s></canvas>
+        </main>
+
+        <footer>
+            <input type="color" id="color-picker" value='#000000'>
+        </footer>
+    </div>
 </body>
 </html>
