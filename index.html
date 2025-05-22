@@ -149,6 +149,7 @@
         const $colorPicker = $('#color-picker')//recuperar el color picker para usar los colores 
         const $clearBtn = $('#clear-btn')//recuperar el boton de limpiar para borrar los dibujos 
         const $drawBtn = $('#draw-btn')
+        const $eraseBtn = $('#erase-btn')
         const $rectangleBtn = $('#rectangle-btn')
         const  ctx = $canvas.getContext('2d')
 
@@ -173,8 +174,12 @@
         $drawBtn.addEventListener('click' , () => {
             setMode(MODES.DRAW)
         })
+        
         $rectangleBtn.addEventListener('click' , () => {
             setMode(MODES.RECTANGLE)
+        })
+        $eraseBtn.addEventListener('click' , () => {
+            setMode(MODES.ERASE)
         })
 
         // METODOS
@@ -197,7 +202,7 @@
         const { offsetX, offsetY } = event
 
 
-        if (mode === MODES.DRAW) {
+        if (mode === MODES.DRAW || mode === MODES.ERASE ) {
             // comenzar un trazado
             ctx.beginPath()
             // mover el trazado a las coordenadas actuales
@@ -247,17 +252,27 @@
         if (mode === MODES.DRAW) {
             $drawBtn.classList.add('active')
             canvas.style.cursor = 'crosshair'
+               ctx.globalCompositeOperation = 'source-over'
+            ctx.lineWidth = 2
             return
         }
 
         if (mode == MODES.RECTANGLE) {
             $rectangleBtn.classList.add('active')
-               canvas.style.cursor = 'crosshair'
+            canvas.style.cursor = 'crosshair'
+            ctx.globalCompositeOperation = 'source-over'
             return
         }
-
+        if (mode == MODES.ERASE) {
+            $eraseBtn.classList.add('active')
+            canvas.style.cursor = 'url("./cursors/erase.png") 0 24, auto';
+            ctx.globalCompositeOperation = 'destination-out'
+            ctx.lineWidth = 20
+        
+            return
+        }
     }
-
+        setMode(MODES.DRAW)
     </script>
 </head>
 <body>
@@ -277,7 +292,7 @@
         </header>
     <aside>
         <nav>
-            <button class="active" id="draw-btn" title="Pencil"></button>
+            <button id="draw-btn" title="Pencil"></button>
             <button id="erase-btn" title="Borrar"></button>
             <button id="rectangle-btn" title="Rectangulo"></button>
             <button id="ellipse-btn" title="Elipse"></button>
